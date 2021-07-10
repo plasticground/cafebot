@@ -13,6 +13,14 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+$router->get('/', ['as' => 'home', 'uses' => 'IndexController@index']);
+$router->post('login', ['as' => 'login', 'uses' => 'LoginController@login']);
+$router->get('logout', ['as' => 'logout', 'uses' => 'LoginController@logout']);
+
+$router->group(['middleware' => 'auth'], function () use ($router) {
+    $router->get('dashboard', ['as' => 'admin.dashboard', 'uses' => 'IndexController@dashboard']);
+    $router->group(['prefix' => 'bot'], function () use ($router) {
+        $router->get('/', ['as' => 'admin.bot.index', 'uses' => 'BotController@index']);
+        $router->post('set-webhook', ['as' => 'admin.bot.setWebhook', 'uses' => 'BotController@setWebhook']);
+    });
 });
