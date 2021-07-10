@@ -2,6 +2,9 @@
 
 namespace App\Console;
 
+use App\Console\Commands\KeyCommand;
+use App\Console\Commands\ServeCommand;
+use App\Console\Commands\UserCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 
@@ -13,7 +16,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        KeyCommand::class,
+        ServeCommand::class,
+        UserCommand::class
     ];
 
     /**

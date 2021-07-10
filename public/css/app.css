@@ -1,0 +1,76 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+pre {
+    overflow: auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0 0 0.5em 0;
+}
+
+.wrapper {
+    box-shadow: 0 0 100px rgba(0,0,0,0.05);
+    height: 100%;
+    width: 70%;
+    margin: 0 auto;
+    overflow: auto;
+}
+
+@media screen and (min-width: 980px) {
+    .wrapper {
+        width: 70%;
+    }
+}
+
+@media screen  and (max-width: 979px) {
+    .wrapper {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .wrapper {
+        width: 100%;
+    }
+}
+
+.container {
+    padding: 1em;
+}
+
+.form-group {
+    display: block;
+    padding: 0.5em;
+}
+
+.form-group input {
+    border: 1px solid;
+    margin: 0.5em 0;
+    height: 2em;
+    width: 100%;
+}
+
+.form-group button {
+    border: 1px solid;
+    margin: 0.5em 0;
+    height: 2em;
+}
+
+.text-block {
+    padding: 1em;
+}
+
+.json {
+    padding: 0.5em;
+    border: 1px solid lightgrey;
+}
+
+.link-muted {
+    color: gray;
+    font-size: small;
+}
