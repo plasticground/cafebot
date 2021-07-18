@@ -61,6 +61,7 @@ $app->singleton('cookie', function () use ($app) {
 });
 
 $app->bind(Illuminate\Contracts\Cookie\QueueingFactory::class, 'cookie');
+$app->bind(\App\Contracts\BotContract::class, \App\Services\BotService::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -91,10 +92,11 @@ $app->configure('session');
 
  $app->middleware([
      \Illuminate\Session\Middleware\StartSession::class,
-     App\Http\Middleware\ExampleMiddleware::class
+//     App\Http\Middleware\ExampleMiddleware::class
  ]);
 
  $app->routeMiddleware([
+     'api' => App\Http\Middleware\ApiMiddleware::class,
      'auth' => App\Http\Middleware\Authenticate::class,
  ]);
 
@@ -111,6 +113,7 @@ $app->configure('session');
 
 // $app->register(App\Providers\AppServiceProvider::class);
  $app->register(App\Providers\AuthServiceProvider::class);
+ $app->register(\Telegram\Bot\Laravel\TelegramServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
 /*

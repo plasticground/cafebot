@@ -39,6 +39,7 @@ return [
             'webhook_url'         => env('TELEGRAM_WEBHOOK_URL', 'YOUR-BOT-WEBHOOK-URL'),
             'commands'            => [
                 \App\Http\Controllers\Api\v1\Bot\Commands\HelpCommand::class,
+                \App\Http\Controllers\Api\v1\Bot\Commands\StartCommand::class,
             ],
         ],
 

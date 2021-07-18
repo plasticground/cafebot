@@ -35,13 +35,5 @@
             </a>
             <pre class="json">{{ var_export(json_decode($webhookInfo), 1) }}</pre>
         </div>
-
-        <div class="text-block">
-            <h4>Update:</h4>
-            <a class="link-muted" href="https://core.telegram.org/bots/api#update">
-                https://core.telegram.org/bots/api#update
-            </a>
-            <pre class="json">{{ var_export(json_decode($bot->getWebhookUpdate(), 1)) }}</pre>
-        </div>
     </div>
 @endsection

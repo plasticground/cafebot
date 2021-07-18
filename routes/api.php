@@ -13,6 +13,6 @@
 |
 */
 
-$router->group(['prefix' => 'v1', 'middleware' => 'api'], function () use ($router) {
-    $router->post('webhook', ['as' => 'api.webhook', 'uses' => 'Api\v1\Bot\BotController@webhook']);
+$router->group(['prefix' => 'api/v1', 'middleware' => 'api'], function () use ($router) {
+    $router->post('{token}/webhook', ['as' => 'api.webhook', 'uses' => 'Api\v1\Bot\BotController@webhook']);
 });
