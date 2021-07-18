@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\BotService;
 use Illuminate\Http\Request;
 use Telegram\Bot\Api;
 
