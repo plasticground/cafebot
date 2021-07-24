@@ -5,15 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Chat
+ * Class Client
  *
- * @property int $id
+ * @property int $telegram_id
  * @property int $state
+ * @property-read
  * @package App\Models
  */
-class Chat extends Model
+class BotState extends Model
 {
     public $timestamps = false;
+
+    protected $primaryKey = 'telegram_id';
 
     public const STATE_NEW = 0;
 
@@ -27,7 +30,7 @@ class Chat extends Model
 
     /** @var string[]  */
     protected $fillable = [
-        'id',
-        'state',
+        'telegram_id',
+        'state'
     ];
 }
