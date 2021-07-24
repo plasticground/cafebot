@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Model;
  * Class Client
  *
  * @property int $id
+ * @property int $telegram_id
  * @property string $name
- * @property string $telegram
  * @property string $phone
  * @property string $locale
+ * @property string $telegram_username
  * @property-read Location $location
  * @property-read Order[] $orders
  * @package App\Models
@@ -21,9 +22,10 @@ class Client extends Model
     /** @var string[]  */
     protected $fillable = [
         'name',
-        'telegram',
         'phone',
-        'locale'
+        'locale',
+        'telegram_id',
+        'telegram_username'
     ];
 
     /**

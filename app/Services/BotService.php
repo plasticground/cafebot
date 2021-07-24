@@ -6,16 +6,14 @@ namespace App\Services;
 
 
 use App\Contracts\BotContract;
-use App\Models\Chat;
-use Illuminate\Support\Arr;
+use App\Models\BotState;
+use App\Models\Client;
+use App\Models\Location;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Helpers\Emojify;
-use Telegram\Bot\Keyboard\Button;
 use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Laravel\Facades\Telegram;
-use Telegram\Bot\Objects\MessageEntity;
 use Telegram\Bot\Objects\Update;
 
 /**
@@ -30,41 +28,73 @@ class BotService implements BotContract
     public function getUpdate(Update $update)
     {
         $message = $update->getMessage();
-        $chat = Chat::find($message->chat->id);
+        $chat = BotState::find($message->from->id);
 
         if ($chat) {
-            if ($chat->state > Chat::STATE_REGISTRATION_START && $chat->state < Chat::STATE_REGISTRATION_DONE) {
+            if ($chat->state > BotState::STATE_REGISTRATION_START && $chat->state < BotState::STATE_REGISTRATION_DONE) {
                 switch ($chat->state) {
-                    case Chat::STATE_REGISTRATION_LANGUAGE:
+                    case BotState::STATE_REGISTRATION_LANGUAGE:
+
+                        if (($client = Client::whereTelegramId($message->from->id)->first()) === null) {
+                            $client = new Client([
+                                'telegram_id' => $message->from->id,
+                                'telegram_username' => $message->from->username,
+                            ]);
+                        }
+
                         switch ($message->text) {
                             case Emojify::text(':ua:'):
-                                Telegram::sendMessage(['chat_id' => $chat->id, 'text' => 'Выбран украинский']);
+                                $client->locale = 'ua';
+
+                                Telegram::sendMessage(['chat_id' => $chat->telegram_id, 'text' => 'Выбран украинский']);
                                 $this->registration($chat, 1);
+
                                 break;
                             case Emojify::text(':ru:'):
-                                Telegram::sendMessage(['chat_id' => $chat->id, 'text' => 'Выбран русский']);
+                                $client->locale = 'ru';
+
+                                Telegram::sendMessage(['chat_id' => $chat->telegram_id, 'text' => 'Выбран русский']);
                                 $this->registration($chat, 1);
+
                                 break;
                         }
+
+                        $client->save();
+
                         break;
 
-                    case Chat::STATE_REGISTRATION_NAME:
-                        Telegram::sendMessage(['chat_id' => $chat->id, 'text' => 'Ваше имя: ' . $message->text]);
+                    case BotState::STATE_REGISTRATION_NAME:
+                        Client::whereTelegramId($message->from->id)->update(['name' => $message->text]);
+                        Telegram::sendMessage(['chat_id' => $chat->telegram_id, 'text' => 'Ваше имя: ' . $message->text]);
                         $this->registration($chat, 2);
+
                         break;
 
-                    case Chat::STATE_REGISTRATION_PHONE:
-                        Telegram::sendMessage(['chat_id' => $chat->id, 'text' => 'Ваш телефон: ' . $message->text]);
+                    case BotState::STATE_REGISTRATION_PHONE:
+                        Client::whereTelegramId($message->from->id)->update(['phone' => $message->text]);
+                        Telegram::sendMessage(['chat_id' => $chat->telegram_id, 'text' => 'Ваш телефон: ' . $message->text]);
                         $this->registration($chat, 3);
                         break;
 
-                    case Chat::STATE_REGISTRATION_LOCATION_SUB_1:
-                        Telegram::sendMessage(['chat_id' => $chat->id, 'text' => 'Ваше ряд: ' . $message->text]);
+                    case BotState::STATE_REGISTRATION_LOCATION_SUB_1:
+                        $client = Client::whereTelegramId($message->from->id)->first();
+                        Location::create([
+                            'client_id' => $client->id,
+                            'name' => Location::NAME_RYNOK,
+                            'sub1' => $message->text
+                        ]);
+
+                        Telegram::sendMessage(['chat_id' => $chat->telegram_id, 'text' => 'Ваш ряд: ' . $message->text]);
                         $this->registration($chat, 4);
                         break;
 
-                    case Chat::STATE_REGISTRATION_LOCATION_SUB_2:
-                        Telegram::sendMessage(['chat_id' => $chat->id, 'text' => 'Ваше контейнер: ' . $message->text]);
+                    case BotState::STATE_REGISTRATION_LOCATION_SUB_2:
+                        Location::whereHas('client', function (Builder $builder) use ($message) {
+                            return $builder->whereTelegramId($message->from->id);
+                        })
+                            ->first()
+                            ->update(['sub2' => $message->text]);
+                        Telegram::sendMessage(['chat_id' => $chat->telegram_id, 'text' => 'Ваш контейнер: ' . $message->text]);
                         $this->registration($chat, 5);
                         break;
                 }
@@ -83,7 +113,7 @@ class BotService implements BotContract
             'action-5' => 'И последнее, напишите номер контейтера:',
             'done' => 'Спасибо! Теперь вы можете сделать заказ ☺'
         ]))->map(function ($item) use ($chat){
-            return ['chat_id' => $chat->id, 'text' => $item];
+            return ['chat_id' => $chat->telegram_id, 'text' => $item];
         });
 
         switch ($stage) {
@@ -95,7 +125,7 @@ class BotService implements BotContract
                 );
 //                $langKeyboard = Keyboard::remove();
 
-                $chat->update(['state' => Chat::STATE_REGISTRATION_LANGUAGE]);
+                $chat->update(['state' => BotState::STATE_REGISTRATION_LANGUAGE]);
 
                 Telegram::sendMessage($messages->get('start'));
                 Telegram::sendMessage($messages->get('action-1') + ['reply_markup' => $langKeyboard]);
@@ -103,31 +133,31 @@ class BotService implements BotContract
 
             case 1:
             $langKeyboard = Keyboard::remove();
-            $chat->update(['state' => Chat::STATE_REGISTRATION_NAME]);
+            $chat->update(['state' => BotState::STATE_REGISTRATION_NAME]);
 
             Telegram::sendMessage($messages->get('action-2') + ['reply_markup' => $langKeyboard]);
             break;
 
             case 2:
-            $chat->update(['state' => Chat::STATE_REGISTRATION_PHONE]);
+            $chat->update(['state' => BotState::STATE_REGISTRATION_PHONE]);
 
             Telegram::sendMessage($messages->get('action-3'));
             break;
 
             case 3:
-            $chat->update(['state' => Chat::STATE_REGISTRATION_LOCATION_SUB_1]);
+            $chat->update(['state' => BotState::STATE_REGISTRATION_LOCATION_SUB_1]);
 
             Telegram::sendMessage($messages->get('action-4'));
             break;
 
             case 4:
-            $chat->update(['state' => Chat::STATE_REGISTRATION_LOCATION_SUB_2]);
+            $chat->update(['state' => BotState::STATE_REGISTRATION_LOCATION_SUB_2]);
 
             Telegram::sendMessage($messages->get('action-5'));
             break;
 
             case 5:
-            $chat->update(['state' => Chat::STATE_REGISTRATION_DONE]);
+            $chat->update(['state' => BotState::STATE_REGISTRATION_DONE]);
 
             Telegram::sendMessage($messages->get('done'));
             break;

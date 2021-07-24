@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\v1\Bot\Commands;
 
 
 use App\Contracts\BotContract;
-use App\Models\Chat;
+use App\Models\BotState;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Commands\Command;
 
@@ -29,22 +29,22 @@ class StartCommand extends Command
      */
     public function handle()
     {
-        $chat_id = $this->getUpdate()->getChat()->id;
+        $id = $this->getUpdate()->message->from->id;
 
-        if (Chat::find($chat_id) === null) {
-            Chat::create(
+        if (BotState::find($id) === null) {
+            BotState::create(
                 [
-                    'id' => $chat_id,
-                    'state' => Chat::STATE_NEW,
+                    'telegram_id' => $id,
+                    'state' => BotState::STATE_NEW,
                 ]
             );
         }
 
-        $chat = Chat::find($chat_id);
+        $botState = BotState::find($id);
 
-        if ($chat->state === Chat::STATE_NEW) {
+        if ($botState->state === BotState::STATE_NEW) {
             try {
-                app(BotContract::class)->registration($chat);
+                app(BotContract::class)->registration($botState);
 
                 return response()->json(['ok' => true]);
             } catch (\Throwable $exception) {
