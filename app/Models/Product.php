@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $category_id
+ * @property int $sorting_position
  * @property string $name
  * @property float $price
  * @package App\Models
@@ -20,6 +21,7 @@ class Product extends Model
         'category_id',
         'name',
         'price',
+        'sorting_position',
     ];
 
     /**
