@@ -9,14 +9,16 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $sorting_position
- * @property string $name
+ * @property string $ru_name
+ * @property string $ua_name
  * @package App\Models
  */
 class ProductCategory extends Model
 {
     /** @var string[]  */
     protected $fillable = [
-        'name',
+        'ru_name',
+        'ua_name',
         'sorting_position',
     ];
 

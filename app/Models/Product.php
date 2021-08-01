@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $category_id
  * @property int $sorting_position
- * @property string $name
+ * @property string $ru_name
+ * @property string $ua_name
  * @property float $price
  * @package App\Models
  */
@@ -19,7 +20,8 @@ class Product extends Model
     /** @var string[]  */
     protected $fillable = [
         'category_id',
-        'name',
+        'ru_name',
+        'ua_name',
         'price',
         'sorting_position',
     ];

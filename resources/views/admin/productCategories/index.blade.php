@@ -13,10 +13,8 @@
                     <tr>
                         <th width="50">#</th>
                         <th width="50">ID</th>
-                        <th width="600">Name</th>
-{{--                        TODO--}}
-{{--                        <th width="600">UA</th>--}}
-{{--                        <th width="600">RU</th>--}}
+                        <th width="400">RU</th>
+                        <th width="400">UA</th>
                         <th width="100"></th>
                     </tr>
                 </thead>
@@ -31,16 +29,22 @@
                 <h4>New category</h4>
 
                 <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" placeholder="Enter category name">
+                    <label for="ru_name">Name RU</label>
+                    <input type="text" id="ru_name" name="ru_name" placeholder="Enter category russian name">
                 </div>
+
+                <div class="form-group">
+                    <label for="ua_name">Name UA</label>
+                    <input type="text" id="ua_name" name="ua_name" placeholder="Enter category ukrainian name">
+                </div>
+
                 @if($categories->isNotEmpty())
                     <div class="form-group">
                         <label for="sorting_position">Place after:</label>
                         <select name="sorting_position" id="sorting_position">
                             <option value="0">Set first</option>
                             @foreach($categories as $category)
-                                <option value="{{ $category->sorting_position }}">{{ $category->name }}</option>
+                                <option value="{{ $category->sorting_position }}">{{ $category->ru_name }}</option>
                             @endforeach
                         </select>
                     </div>

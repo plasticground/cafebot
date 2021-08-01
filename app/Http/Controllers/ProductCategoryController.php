@@ -14,7 +14,7 @@ class ProductCategoryController extends Controller
     public function index()
     {
         $categories = ProductCategory::orderBy('sorting_position')
-            ->get(['id', 'name', 'sorting_position']);
+            ->get();
 
         return view('admin.productCategories.index', compact('categories'));
     }
