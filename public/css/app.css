@@ -13,6 +13,36 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0 0 0.5em 0;
 }
 
+table {
+    width: 100%;
+    border: solid 1px black;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+thead {
+    border-bottom: solid 1px black;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+th {
+    text-align: left;
+    padding: 0.5em;
+}
+
+td {
+    padding: 0.5em;
+}
+
+button {
+    border: 1px solid;
+    margin: 0.5em 0;
+    height: 2em;
+}
+
 .wrapper {
     box-shadow: 0 0 100px rgba(0,0,0,0.05);
     height: 100%;
@@ -53,12 +83,6 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0.5em 0;
     height: 2em;
     width: 100%;
-}
-
-.form-group button {
-    border: 1px solid;
-    margin: 0.5em 0;
-    height: 2em;
 }
 
 .text-block {

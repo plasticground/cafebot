@@ -8,14 +8,18 @@ use Illuminate\Database\Eloquent\Model;
  * Class ProductCategory
  *
  * @property int $id
- * @property string $name
+ * @property int $sorting_position
+ * @property string $ru_name
+ * @property string $ua_name
  * @package App\Models
  */
 class ProductCategory extends Model
 {
     /** @var string[]  */
     protected $fillable = [
-        'name'
+        'ru_name',
+        'ua_name',
+        'sorting_position',
     ];
 
     /**
@@ -23,6 +27,7 @@ class ProductCategory extends Model
      */
     public function products()
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Product::class, 'category_id', 'id')
+            ->orderBy('sorting_position');
     }
 }
