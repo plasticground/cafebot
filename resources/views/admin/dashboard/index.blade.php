@@ -13,6 +13,9 @@
             <li>
                 <a href="{{ route('admin.productCategories.index') }}">Product categories</a>
             </li>
+            <li>
+                <a href="{{ route('admin.products.index') }}">Products</a>
+            </li>
         </ul>
     </div>
 @endsection

@@ -32,4 +32,11 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->delete('/destroy/{id}', ['as' => 'admin.productCategories.destroy', 'uses' => 'ProductCategoryController@destroy']);
     });
 
+    $router->group(['prefix' => 'products'], function () use ($router) {
+        $router->get('/', ['as' => 'admin.products.index', 'uses' => 'ProductController@index']);
+        $router->post('/store', ['as' => 'admin.products.store', 'uses' => 'ProductController@store']);
+        $router->put('/update/{id}', ['as' => 'admin.products.update', 'uses' => 'ProductController@update']);
+        $router->delete('/destroy/{id}', ['as' => 'admin.products.destroy', 'uses' => 'ProductController@destroy']);
+    });
+
 });

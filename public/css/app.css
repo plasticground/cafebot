@@ -37,6 +37,12 @@ td {
     padding: 0.5em;
 }
 
+button {
+    border: 1px solid;
+    margin: 0.5em 0;
+    height: 2em;
+}
+
 .wrapper {
     box-shadow: 0 0 100px rgba(0,0,0,0.05);
     height: 100%;
@@ -77,12 +83,6 @@ td {
     margin: 0.5em 0;
     height: 2em;
     width: 100%;
-}
-
-.form-group button {
-    border: 1px solid;
-    margin: 0.5em 0;
-    height: 2em;
 }
 
 .text-block {

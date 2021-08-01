@@ -36,6 +36,11 @@ class ProductCategoryController extends Controller
         return redirect(route('admin.productCategories.index'));
     }
 
+    /**
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Laravel\Lumen\Http\Redirector
+     */
     public function update($id, Request $request)
     {
         $category = ProductCategory::findOrFail($id);
