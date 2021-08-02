@@ -39,4 +39,18 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->delete('/destroy/{id}', ['as' => 'admin.products.destroy', 'uses' => 'ProductController@destroy']);
     });
 
+    $router->group(['prefix' => 'menus'], function () use ($router) {
+        $router->get('/', ['as' => 'admin.menus.index', 'uses' => 'MenuController@index']);
+        $router->post('/store', ['as' => 'admin.menus.store', 'uses' => 'MenuController@store']);
+        $router->put('/update/{id}', ['as' => 'admin.menus.update', 'uses' => 'MenuController@update']);
+        $router->delete('/destroy/{id}', ['as' => 'admin.menus.destroy', 'uses' => 'MenuController@destroy']);
+    });
+
+    $router->group(['prefix' => 'cafes'], function () use ($router) {
+        $router->get('/', ['as' => 'admin.cafes.index', 'uses' => 'CafeController@index']);
+        $router->post('/store', ['as' => 'admin.cafes.store', 'uses' => 'CafeController@store']);
+        $router->put('/update/{id}', ['as' => 'admin.cafes.update', 'uses' => 'CafeController@update']);
+        $router->delete('/destroy/{id}', ['as' => 'admin.cafes.destroy', 'uses' => 'CafeController@destroy']);
+    });
+
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Menu;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,10 +14,10 @@ class ProductCategoryController extends Controller
      */
     public function index()
     {
-        $categories = ProductCategory::orderBy('sorting_position')
+        $menus = Menu::with(['categories', 'cafe'])
             ->get();
 
-        return view('admin.productCategories.index', compact('categories'));
+        return view('admin.productCategories.index', compact('menus'));
     }
 
     /**
