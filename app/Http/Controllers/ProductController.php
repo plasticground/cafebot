@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cafe;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
@@ -11,11 +12,15 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $categories = ProductCategory::with('products')
-            ->orderBy('sorting_position')
+        $cafes = Cafe::with(['menu', 'menu.categories', 'menu.categories.products'])
+            ->whereNotNull('menu_id')
             ->get();
 
-        return view('admin.products.index', compact('categories'));
+//        $categories = ProductCategory::with('products')
+//            ->orderBy('sorting_position')
+//            ->get();
+
+        return view('admin.products.index', compact('cafes'));
     }
     /**
      * @param Request $request
