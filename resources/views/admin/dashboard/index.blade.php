@@ -11,6 +11,12 @@
                 <a href="{{ route('admin.bot.index') }}">Bot info</a>
             </li>
             <li>
+                <a href="{{ route('admin.cafes.index') }}">Cafes</a>
+            </li>
+            <li>
+                <a href="{{ route('admin.menus.index') }}">Menus</a>
+            </li>
+            <li>
                 <a href="{{ route('admin.productCategories.index') }}">Product categories</a>
             </li>
             <li>

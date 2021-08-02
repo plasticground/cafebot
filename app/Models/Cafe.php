@@ -8,30 +8,26 @@ use Illuminate\Database\Eloquent\Model;
  * Class Product
  *
  * @property int $id
- * @property int $category_id
- * @property int $sorting_position
+ * @property int $menu_id
  * @property string $ru_name
  * @property string $ua_name
- * @property float $price
- * @property ProductCategory $category
+ * @property-read Menu $menu
  * @package App\Models
  */
-class Product extends Model
+class Cafe extends Model
 {
     /** @var string[]  */
     protected $fillable = [
-        'category_id',
         'ru_name',
         'ua_name',
-        'price',
-        'sorting_position',
+        'menu_id'
     ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function category()
+    public function menu()
     {
-        return $this->hasOne(ProductCategory::class);
+        return $this->hasOne(Menu::class, 'id', 'menu_id');
     }
 }
