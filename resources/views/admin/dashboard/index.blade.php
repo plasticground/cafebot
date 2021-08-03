@@ -11,6 +11,9 @@
                 <a href="{{ route('admin.bot.index') }}">Bot info</a>
             </li>
             <li>
+                <a href="{{ route('admin.locations.index') }}">Locations</a>
+            </li>
+            <li>
                 <a href="{{ route('admin.cafes.index') }}">Cafes</a>
             </li>
             <li>

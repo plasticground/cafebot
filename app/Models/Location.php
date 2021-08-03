@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $client_id
- * @property string $name
+ * @property int $location_name_id
  * @property string $sub1
  * @property string $sub2
  * @property-read Client $client
@@ -17,11 +17,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Location extends Model
 {
-    public const NAME_RYNOK = 'rynok';
-
     /** @var string[]  */
     protected $fillable = [
         'client_id',
+        'location_name_id',
         'name',
         'sub1',
         'sub2'
@@ -33,5 +32,10 @@ class Location extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function locationName()
+    {
+        return $this->belongsTo(LocationName::class);
     }
 }
