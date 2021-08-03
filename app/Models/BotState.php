@@ -24,9 +24,10 @@ class BotState extends Model
     public const STATE_REGISTRATION_LANGUAGE = 101;
     public const STATE_REGISTRATION_NAME = 102;
     public const STATE_REGISTRATION_PHONE = 103;
-    public const STATE_REGISTRATION_LOCATION_SUB_1 = 104;
-    public const STATE_REGISTRATION_LOCATION_SUB_2 = 105;
-    public const STATE_REGISTRATION_DONE = 106;
+    public const STATE_REGISTRATION_LOCATION_MAIN = 104;
+    public const STATE_REGISTRATION_LOCATION_SUB_1 = 105;
+    public const STATE_REGISTRATION_LOCATION_SUB_2 = 106;
+    public const STATE_REGISTRATION_DONE = 107;
 
     /** @var string[]  */
     protected $fillable = [
