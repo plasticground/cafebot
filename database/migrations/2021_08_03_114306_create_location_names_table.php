@@ -19,6 +19,12 @@ class CreateLocationNamesTable extends Migration
             $table->string('ua_name');
             $table->timestamps();
         });
+
+        Schema::table('locations', function (Blueprint $table) {
+            $table->dropColumn('name');
+            $table->unsignedBigInteger('location_name_id')->after('client_id');
+            $table->string('sub1')->nullable()->change();
+        });
     }
 
     /**
@@ -28,6 +34,12 @@ class CreateLocationNamesTable extends Migration
      */
     public function down()
     {
+        Schema::table('locations', function (Blueprint $table) {
+            $table->dropColumn('location_name_id');
+            $table->string('name')->after('client_id');
+            $table->string('sub1')->nullable(false)->change();
+        });
+
         Schema::dropIfExists('location_names');
     }
 }

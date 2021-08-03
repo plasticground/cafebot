@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $ua_name
  * @property string $ru_name
+ * @property string $name
  * @package App\Models
  */
 class LocationName extends Model
@@ -20,4 +21,13 @@ class LocationName extends Model
         'ua_name',
         'ru_name',
     ];
+
+    /**
+     * @param string $lang
+     * @return string
+     */
+    public function getName(string $lang = 'ru'): string
+    {
+        return $lang === 'ua' ? $this->ua_name : $this->ru_name;
+    }
 }

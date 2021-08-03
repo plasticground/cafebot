@@ -21,7 +21,6 @@ class Location extends Model
     protected $fillable = [
         'client_id',
         'location_name_id',
-        'name',
         'sub1',
         'sub2'
     ];
