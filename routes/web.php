@@ -53,4 +53,11 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->delete('/destroy/{id}', ['as' => 'admin.cafes.destroy', 'uses' => 'CafeController@destroy']);
     });
 
+    $router->group(['prefix' => 'locations'], function () use ($router) {
+        $router->get('/', ['as' => 'admin.locations.index', 'uses' => 'LocationNameController@index']);
+        $router->post('/store', ['as' => 'admin.locations.store', 'uses' => 'LocationNameController@store']);
+        $router->put('/update/{id}', ['as' => 'admin.locations.update', 'uses' => 'LocationNameController@update']);
+        $router->delete('/destroy/{id}', ['as' => 'admin.locations.destroy', 'uses' => 'LocationNameController@destroy']);
+    });
+
 });
