@@ -27,7 +27,16 @@ class BotState extends Model
     public const STATE_REGISTRATION_LOCATION_MAIN = 104;
     public const STATE_REGISTRATION_LOCATION_SUB_1 = 105;
     public const STATE_REGISTRATION_LOCATION_SUB_2 = 106;
-    public const STATE_REGISTRATION_DONE = 107;
+
+    public const STATE_MAIN_MENU = 200;
+
+    public const STATE_ORDER_NEW = 300;
+
+    public const STATE_HISTORY = 400;
+
+    public const STATE_FEEDBACK = 500;
+
+    public const STATE_SETTINGS = 600;
 
     /** @var string[]  */
     protected $fillable = [
