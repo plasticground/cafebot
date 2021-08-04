@@ -60,4 +60,10 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->delete('/destroy/{id}', ['as' => 'admin.locations.destroy', 'uses' => 'LocationNameController@destroy']);
     });
 
+    $router->group(['prefix' => 'clients'], function () use ($router) {
+        $router->get('/', ['as' => 'admin.clients.index', 'uses' => 'ClientController@index']);
+        $router->put('/update/{id}', ['as' => 'admin.clients.update', 'uses' => 'ClientController@update']);
+        $router->delete('/destroy/{id}', ['as' => 'admin.clients.destroy', 'uses' => 'ClientController@destroy']);
+    });
+
 });
