@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $locale
  * @property string $telegram_username
  * @property-read Location $location
+ * @property-read BotState $botState
  * @property-read Order[] $orders
  * @package App\Models
  */
@@ -34,6 +35,14 @@ class Client extends Model
     public function location()
     {
         return $this->hasOne(Location::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function botState()
+    {
+        return $this->hasOne(BotState::class, 'telegram_id', 'telegram_id');
     }
 
     /**
