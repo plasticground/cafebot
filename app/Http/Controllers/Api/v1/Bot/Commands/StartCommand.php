@@ -44,7 +44,7 @@ class StartCommand extends Command
 
         if ($botState->state === BotState::STATE_NEW) {
             try {
-                app(BotContract::class)->registration($botState);
+                app(BotContract::class)->setChat($botState)->registration(BotState::STATE_REGISTRATION_START);
 
                 return response()->json(['ok' => true]);
             } catch (\Throwable $exception) {

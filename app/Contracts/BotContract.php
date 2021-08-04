@@ -15,5 +15,5 @@ interface BotContract
      * @param $update
      */
     public function getUpdate(Update $update);
-    public function registration($chat, int $stage);
+    public function registration(int $stage);
 }
