@@ -41,6 +41,7 @@ return [
                 \App\Http\Controllers\Api\v1\Bot\Commands\HelpCommand::class,
                 \App\Http\Controllers\Api\v1\Bot\Commands\StartCommand::class,
                 \App\Http\Controllers\Api\v1\Bot\Commands\FeedbackCommand::class,
+                \App\Http\Controllers\Api\v1\Bot\Commands\OrderCommand::class,
             ],
         ],
 

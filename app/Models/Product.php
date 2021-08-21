@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Localeable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Product extends Model
 {
+    use Localeable;
+
     /** @var string[]  */
     protected $fillable = [
         'category_id',
@@ -33,5 +36,14 @@ class Product extends Model
     public function category()
     {
         return $this->hasOne(ProductCategory::class);
+    }
+
+    /**
+     * @param string $locale
+     * @return string
+     */
+    public function getDisplayNamePrice(string $locale = 'ua'): string
+    {
+        return $this->getName($locale) . ' - ' . $this->price . ' ₴';
     }
 }
