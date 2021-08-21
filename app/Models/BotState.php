@@ -31,6 +31,11 @@ class BotState extends Model
     public const STATE_MAIN_MENU = 200;
 
     public const STATE_ORDER_NEW = 300;
+    public const STATE_ORDER_CHOOSE_CAFE = 301;
+    public const STATE_ORDER_STARTED = 302;
+    public const STATE_ORDER_EDITING = 303;
+    public const STATE_ORDER_ACCEPTING = 304;
+    public const STATE_ORDER_FINISHED = 305;
 
     public const STATE_HISTORY = 400;
 

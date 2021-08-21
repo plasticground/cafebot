@@ -2,17 +2,23 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
  * Class Order
  *
  * @property int $id
  * @property int $client_id
+ * @property int $message_id
  * @property int $status
  * @property string $comment
  * @property float $price
+ * @property-read Collection|Product[] $products
  * @package App\Models
+ *
+ * @mixin Builder
  */
 class Order extends Model
 {
@@ -27,6 +33,7 @@ class Order extends Model
     /** @var string[]  */
     protected $fillable = [
         'client_id',
+        'message_id',
         'comment',
         'price',
         'status',
@@ -45,6 +52,32 @@ class Order extends Model
      */
     public function products()
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class)->withPivot(['amount']);
+    }
+
+    public function addProduct(Product $product)
+    {
+        $existingProduct = $this->products()->find($product->id);
+
+        if ($existingProduct) {
+            return $this->products()->updateExistingPivot($product->id, ['amount' => ++$existingProduct->pivot->amount]);
+        }
+
+        $this->products()->attach($product->id);
+
+        return 1;
+    }
+
+    public function removeProduct(Product $product)
+    {
+        $existingProduct = $this->products()->find($product->id);
+
+        if ($existingProduct) {
+            if ($existingProduct->pivot->amount > 1) {
+                return $this->products()->updateExistingPivot($product->id, ['amount' => --$existingProduct->pivot->amount]);
+            }
+        }
+
+        return $this->products()->detach($product->id);
     }
 }
