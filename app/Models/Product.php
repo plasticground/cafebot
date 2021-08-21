@@ -46,4 +46,13 @@ class Product extends Model
     {
         return $this->getName($locale) . ' - ' . $this->price . ' ₴';
     }
+
+    /**
+     * @param string $locale
+     * @return string
+     */
+    public function getDisplayNamePriceWithAmount(string $locale = 'ua'): string
+    {
+        return $this->getName($locale) . ' - ' . $this->pivot->amount . 'шт. (' . ($this->price * $this->pivot->amount) . ' ₴)';
+    }
 }

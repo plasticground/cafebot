@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 /**
@@ -22,13 +23,14 @@ use Illuminate\Support\Collection;
  */
 class Order extends Model
 {
-    public const STATUS_NEW = 0;
-    public const STATUS_CREATING = 1;
-    public const STATUS_CREATED = 2;
-    public const STATUS_COOKING = 3;
-    public const STATUS_DELIVERING = 4;
-    public const STATUS_DONE = 5;
-    public const STATUS_REJECTED = 6;
+    public const
+        STATUS_NEW = 0,
+        STATUS_CREATING = 1,
+        STATUS_CREATED = 2,
+        STATUS_COOKING = 3,
+        STATUS_DELIVERING = 4,
+        STATUS_DONE = 5,
+        STATUS_REJECTED = 6;
 
     /** @var string[]  */
     protected $fillable = [
@@ -79,5 +81,30 @@ class Order extends Model
         }
 
         return $this->products()->detach($product->id);
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getVerbalStatues(): array
+    {
+        return [
+            self::STATUS_NEW => 'Новый',
+            self::STATUS_CREATING => 'Создаётся',
+            self::STATUS_CREATED => 'Создан',
+            self::STATUS_COOKING => 'В готовке',
+            self::STATUS_DELIVERING => 'В доставке',
+            self::STATUS_DONE => 'Завершён',
+            self::STATUS_REJECTED => 'Отклонён'
+        ];
+    }
+
+    /**
+     * @param int $status
+     * @return string
+     */
+    public static function getVerbalStatus(int $status): string
+    {
+        return Arr::get(self::getVerbalStatues(), $status, 'Unknown');
     }
 }

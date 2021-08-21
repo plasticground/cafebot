@@ -14,6 +14,9 @@
                 <a href="{{ route('admin.clients.index') }}">Clients</a>
             </li>
             <li>
+                <a href="{{ route('admin.orders.index') }}">Orders</a>
+            </li>
+            <li>
                 <a href="{{ route('admin.locations.index') }}">Locations</a>
             </li>
             <li>
