@@ -42,6 +42,13 @@ class BotState extends Model
     public const STATE_FEEDBACK = 500;
 
     public const STATE_SETTINGS = 600;
+    public const STATE_SETTINGS_NAME = 601;
+    public const STATE_SETTINGS_PHONE = 602;
+    public const STATE_SETTINGS_LOCATION = 603;
+    public const STATE_SETTINGS_LOCATION_MAIN = 604;
+    public const STATE_SETTINGS_LOCATION_SUB1 = 605;
+    public const STATE_SETTINGS_LOCATION_SUB2 = 606;
+    public const STATE_SETTINGS_LANGUAGE = 607;
 
     /** @var string[]  */
     protected $fillable = [
