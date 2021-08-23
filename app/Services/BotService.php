@@ -627,7 +627,7 @@ class BotService implements BotContract
 
         $menu = Keyboard::make();
         $menu->row(Keyboard::button('/order - Сделать заказ'));
-        $menu->row(Keyboard::button('/history - Мои заказы'), Keyboard::button('/feedback - Обратная связь'));
+        $menu->row(Keyboard::button('/history 1 (стр.) - Мои заказы'), Keyboard::button('/feedback - Обратная связь'));
         $menu->row(Keyboard::button('/settings - Настройки и информация'));
 
         Telegram::sendMessage($messages->get('main-menu') + ['reply_markup' => $menu]);
@@ -958,6 +958,30 @@ class BotService implements BotContract
                 break;
         }
     }
+
+    public function history(int $page = 1)
+    {
+        $orders = Order::with('products')
+            ->whereHas('client', function (Builder $builder) {
+                return $builder->where('telegram_id', $this->client->telegram_id);
+            })
+            ->latest()
+            ->paginate(5, ['*'], 'page', $page);
+
+        $list = $orders->map(function (Order $order) {
+            return "*Заказ № {$order->id} - {$order->price} ₴*\n"
+                . '*Статус - ' . Order::getVerbalStatus($order->status) . '*' . "\n"
+                . $order->products->map(fn(Product $product) => $product->getDisplayNamePriceWithAmount($this->locale))->implode("\n")
+                . ($order->comment ? "\n_{$order->comment}_" : '');
+        });
+
+        Telegram::sendMessage([
+            'chat_id' => $this->chat->telegram_id,
+            'text' => $list->implode("\n\n"),
+            'parse_mode' => 'markdown',
+        ]);
+    }
+
     /**
      * @param array $data
      * @param array $rules
@@ -979,3 +1003,4 @@ class BotService implements BotContract
         return true;
     }
 }
+//TODO: refactoring

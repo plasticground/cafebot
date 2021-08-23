@@ -43,6 +43,7 @@ return [
                 \App\Http\Controllers\Api\v1\Bot\Commands\FeedbackCommand::class,
                 \App\Http\Controllers\Api\v1\Bot\Commands\OrderCommand::class,
                 \App\Http\Controllers\Api\v1\Bot\Commands\SettingsCommand::class,
+                \App\Http\Controllers\Api\v1\Bot\Commands\HistoryCommand::class,
             ],
         ],
 
