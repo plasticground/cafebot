@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\Bot\Commands;
 
 
 use App\Models\Client;
+use App\Models\Feedback;
 use Telegram\Bot\Commands\Command;
 
 /**
@@ -34,8 +35,11 @@ class FeedbackCommand extends Command
             $locale = $client->locale;
         }
 
+        $feedback = Feedback::first();
+
         return $this->replyWithMessage([
-            'text' => "Всякая информация про обратную связь на {$locale} языке"
+            'text' => $feedback->{$locale . '_text'} ?? 'No info',
+            'parse_mode' => 'markdown'
         ]);
     }
 }
