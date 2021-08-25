@@ -85,6 +85,16 @@ button {
     width: 100%;
 }
 
+.form-group label {
+    display: block;
+}
+.form-group textarea {
+    border: 1px solid;
+    margin: 0.5em 0;
+    height: 10em;
+    width: 100%;
+}
+
 .text-block {
     padding: 1em;
 }
