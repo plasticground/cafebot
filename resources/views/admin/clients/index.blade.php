@@ -26,6 +26,8 @@
                 </tbody>
             </table>
         </div>
+
+        {{ $clients->appends(request()->all())->links('widgets.pagination', ['paginator' => $clients]) }}
     </div>
 @endsection
 

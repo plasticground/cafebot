@@ -17,6 +17,7 @@ use Illuminate\Support\Collection;
  * @property string $comment
  * @property float $price
  * @property-read Collection|Product[] $products
+ * @property-read Collection|Product[] $product_list
  * @package App\Models
  *
  * @mixin Builder
@@ -55,6 +56,14 @@ class Order extends Model
     public function products()
     {
         return $this->belongsToMany(Product::class)->withPivot(['amount']);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getProductListAttribute()
+    {
+        return $this->products->map(fn(Product $product) => $product->getDisplayNamePriceWithAmount('ru'));
     }
 
     public function addProduct(Product $product)
