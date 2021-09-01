@@ -31,11 +31,11 @@ class Product extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function category()
     {
-        return $this->hasOne(ProductCategory::class);
+        return $this->belongsTo(ProductCategory::class);
     }
 
     /**

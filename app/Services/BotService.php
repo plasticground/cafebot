@@ -716,13 +716,24 @@ class BotService implements BotContract
 
     private function makeOrder(Product $product)
     {
+        $cafe = $product->category->menu->cafe;
+
         $order = Order::with('products')
             ->whereClientId($this->client->id)
+            ->whereCafeId($cafe->id)
             ->whereStatus(Order::STATUS_CREATING)
             ->latest(Order::UPDATED_AT)
             ->first();
 
         if ($order) {
+            if ($order->cafe_id !== $cafe->id) {
+                return Telegram::sendMessage([
+                    'chat_id' => $this->chat->telegram_id,
+                    'text' => 'Вы не можете выбрать блюда из меню другого заведения.',
+                    'parse_mode' => 'markdown'
+                ]);
+            }
+
             $order->price += $product->price;
         } else {
             $orderButtons = Keyboard::make()
@@ -738,6 +749,7 @@ class BotService implements BotContract
             ]);
 
             $order = Order::create([
+                'cafe_id' => $cafe->id,
                 'client_id' => $this->client->id,
                 'status' => Order::STATUS_CREATING,
                 'price' => $product->price
@@ -774,14 +786,25 @@ class BotService implements BotContract
 
     private function editOrder(Product $product)
     {
+        $cafe = $product->category->menu->cafe;
+
         $order = Order::with('products')
             ->whereClientId($this->client->id)
+            ->whereCafeId($cafe->id)
             ->whereStatus(Order::STATUS_CREATING)
             ->latest(Order::UPDATED_AT)
             ->first();
 
         if ($order === null) {
             return Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Сначала начните собирать заказ']);
+        }
+
+        if ($order->cafe_id !== $cafe->id) {
+            return Telegram::sendMessage([
+                'chat_id' => $this->chat->telegram_id,
+                'text' => 'Вы не можете выбрать блюда из меню другого заведения.',
+                'parse_mode' => 'markdown'
+            ]);
         }
 
         if ($order->products()->doesntExist()) {
@@ -837,7 +860,7 @@ class BotService implements BotContract
         $order->update([
             'status' => Order::STATUS_CREATED
         ]);
-        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Заказ *№ ' . $order->id . '* отправлен в рестик!', 'parse_mode' => 'markdown']);
+        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Заказ *№ ' . $order->id . '* отправлен в *' . $order->cafe->getName($this->locale) . '*!', 'parse_mode' => 'markdown']);
         $this->mainMenu();
     }
 
