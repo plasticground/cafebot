@@ -11,13 +11,12 @@ class OrderController extends Controller
     /**
      * @return \Illuminate\View\View|\Laravel\Lumen\Application
      */
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::whereHas('client')->with('products')->get();//TODO: pagination
-        $orders = $orders->each(
-            fn(Order $order) => $order->product_list = $order->products
-                ->map(fn(Product $product) => $product->getDisplayNamePriceWithAmount('ru'))
-        );
+        $orders = Order::whereHas('client')
+            ->with('products')
+            ->latest('updated_at')
+            ->paginate($request->get('limit', 15));
 
         return view('admin.orders.index', compact('orders'));
     }
