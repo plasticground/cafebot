@@ -11,11 +11,13 @@ use Illuminate\Support\Collection;
  * Class Order
  *
  * @property int $id
+ * @property int $cafe_id
  * @property int $client_id
  * @property int $message_id
  * @property int $status
  * @property string $comment
  * @property float $price
+ * @property-read Cafe $cafe
  * @property-read Collection|Product[] $products
  * @property-read Collection|Product[] $product_list
  * @package App\Models
@@ -35,6 +37,7 @@ class Order extends Model
 
     /** @var string[]  */
     protected $fillable = [
+        'cafe_id',
         'client_id',
         'message_id',
         'comment',
@@ -48,6 +51,14 @@ class Order extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cafe()
+    {
+        return $this->belongsTo(Cafe::class);
     }
 
     /**
