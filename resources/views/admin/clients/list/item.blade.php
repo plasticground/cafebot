@@ -17,7 +17,7 @@
         </div>
         <div class="__input" style="display: none">
             <input type="number"
-                   value="{{ $client->phone }}"
+                   value="{{ (int) $client->phone }}"
                    oninput="document.getElementById('input_phone_{{ $client->id }}').value = this.value;"
             >
         </div>
