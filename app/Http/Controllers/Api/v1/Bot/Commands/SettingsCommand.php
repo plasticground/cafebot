@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Bot\Commands;
 
 
-use App\Contracts\BotContract;
+use App\Contracts\SettingsContract;
 use App\Models\BotState;
 use App\Models\Client;
 use Illuminate\Support\Facades\Log;
@@ -35,10 +35,9 @@ class SettingsCommand extends Command
         if ($client) {
             if (($botState = $client->botState)->state === BotState::STATE_MAIN_MENU) {
                 try {
-                    app(BotContract::class)
+                    app(SettingsContract::class)
                         ->setChat($botState)
                         ->setClient($client)
-                        ->setLocale($client->locale)
                         ->settings(BotState::STATE_SETTINGS);
 
                     return response()->json(['ok' => true]);

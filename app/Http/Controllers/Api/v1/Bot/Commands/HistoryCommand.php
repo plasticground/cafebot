@@ -41,7 +41,6 @@ class HistoryCommand extends Command
                     app(BotContract::class)
                         ->setChat($botState)
                         ->setClient($client)
-                        ->setLocale($client->locale)
                         ->history((int) $page);
 
                     return response()->json(['ok' => true]);

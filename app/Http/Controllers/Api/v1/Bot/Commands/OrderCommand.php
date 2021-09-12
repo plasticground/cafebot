@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Api\v1\Bot\Commands;
 
 
-use App\Contracts\BotContract;
+use App\Contracts\OrderContract;
 use App\Models\BotState;
-use App\Models\Cafe;
 use App\Models\Client;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Commands\Command;
@@ -36,9 +35,9 @@ class OrderCommand extends Command
         if ($client) {
             if (($botState = $client->botState)->state === BotState::STATE_MAIN_MENU) {
                 try {
-                    app(BotContract::class)
+                    app(OrderContract::class)
                         ->setChat($botState)
-                        ->setLocale($client->locale)
+                        ->setClient($client)
                         ->order(BotState::STATE_ORDER_NEW);
 
                     return response()->json(['ok' => true]);
