@@ -60,19 +60,19 @@ class SettingsService implements SettingsContract
         switch ($state) {
             case BotState::STATE_SETTINGS:
                 switch ($text) {
-                    case 'Имя':
+                    case trans('bot\settings.select.name'):
                         $this->settings(BotState::STATE_SETTINGS_NAME);
                         break;
-                    case 'Телефон':
+                    case trans('bot\settings.select.phone'):
                         $this->settings(BotState::STATE_SETTINGS_PHONE);
                         break;
-                    case 'Место работы':
+                    case trans('bot\settings.select.location'):
                         $this->settings(BotState::STATE_SETTINGS_LOCATION);
                         break;
-                    case 'Язык':
+                    case trans('bot\settings.select.lang'):
                         $this->settings(BotState::STATE_SETTINGS_LANGUAGE);
                         break;
-                    case 'Я передумал':
+                    case trans('bot\settings.select.back'):
                         $state = BotState::STATE_MAIN_MENU;
                         break;
                 }
@@ -81,15 +81,17 @@ class SettingsService implements SettingsContract
                 switch ($text) {
                     case BotService::LANG_UA:
                         $this->client->update(['locale' => 'ua']);
+                        app('translator')->setLocale('ua');
 
-                        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Выбран украинский']);
+                        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.lang')]);
                         $state = BotState::STATE_MAIN_MENU;
 
                         break;
                     case BotService::LANG_RU:
                         $this->client->update(['locale' => 'ru']);
+                        app('translator')->setLocale('ru');
 
-                        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Выбран русский']);
+                        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.lang')]);
                         $state = BotState::STATE_MAIN_MENU;
 
                         break;
@@ -107,7 +109,7 @@ class SettingsService implements SettingsContract
                 )
                 ) {
                     $this->client->update(['name' => $text]);
-                    Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Ваше имя: ' . $text]);
+                    Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.name') . $text]);
                     $state = BotState::STATE_MAIN_MENU;
                 }
 
@@ -123,20 +125,20 @@ class SettingsService implements SettingsContract
                 )
                 ) {
                     $this->client->update(['phone' => $text]);
-                    Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Ваш телефон: ' . $text]);
+                    Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.phone') . $text]);
                     $state = BotState::STATE_MAIN_MENU;
                 }
                 break;
 
             case BotState::STATE_SETTINGS_LOCATION:
                 switch ($text) {
-                    case 'Место доставки':
+                    case trans('bot\settings.select.locations.main'):
                         $this->settings(BotState::STATE_SETTINGS_LOCATION_MAIN);
                         break;
-                    case 'Ряд':
+                    case trans('bot\settings.select.locations.sub1'):
                         $this->settings(BotState::STATE_SETTINGS_LOCATION_SUB1);
                         break;
-                    case 'Контейнер':
+                    case trans('bot\settings.select.locations.sub2'):
                         $this->settings(BotState::STATE_SETTINGS_LOCATION_SUB2);
                         break;
                 }
@@ -160,7 +162,7 @@ class SettingsService implements SettingsContract
                         ->update(['location_name_id' => $location->id]);
                 }
 
-                Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Место доставки: ' . $text]);
+                Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.location.main') . $text]);
                 $state = BotState::STATE_MAIN_MENU;
                 break;
 
@@ -180,7 +182,7 @@ class SettingsService implements SettingsContract
                         ->update(['sub1' => $text]);
                 }
 
-                Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Ваш ряд: ' . $text]);
+                Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.location.sub1') . $text]);
                 $state = BotState::STATE_MAIN_MENU;
                 break;
 
@@ -198,7 +200,7 @@ class SettingsService implements SettingsContract
                     })
                         ->first()
                         ->update(['sub2' => $text]);
-                    Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Ваш контейнер: ' . $text]);
+                    Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.location.sub2') . $text]);
                     $state = BotState::STATE_MAIN_MENU;
                 }
                 break;
@@ -241,13 +243,13 @@ class SettingsService implements SettingsContract
                 $this->chat->update(['state' => BotState::STATE_SETTINGS]);
 
                 $settingsButtons = Keyboard::make()
-                    ->row(Keyboard::button('Имя'), Keyboard::button('Телефон'))
-                    ->row(Keyboard::button('Место работы'), Keyboard::button('Язык'))
-                    ->row(Keyboard::button('Я передумал'));
+                    ->row(Keyboard::button(trans('bot\settings.select.name')), Keyboard::button(trans('bot\settings.select.phone')))
+                    ->row(Keyboard::button(trans('bot\settings.select.location')), Keyboard::button(trans('bot\settings.select.lang')))
+                    ->row(Keyboard::button(trans('bot\settings.select.back')));
 
                 Telegram::sendMessage([
                     'chat_id' => $this->chat->telegram_id,
-                    'text' => "Выберите что вы хотите изменить:\n"
+                    'text' => trans('bot\settings.select.choose')
                         . $this->client->name . "\n"
                         . $this->client->phone . "\n"
                         . $this->client->location->locationName->getName($this->client->locale) . ': ' . $this->client->location->sub1 . ' - ' . $this->client->location->sub2 . "\n"
@@ -262,7 +264,7 @@ class SettingsService implements SettingsContract
 
                 Telegram::sendMessage([
                     'chat_id' => $this->chat->telegram_id,
-                    'text' => 'Введите новое имя',
+                    'text' => trans('bot\settings.enter.name'),
                     'reply_markup' => Keyboard::remove()
                 ]);
 
@@ -272,7 +274,7 @@ class SettingsService implements SettingsContract
 
                 Telegram::sendMessage([
                     'chat_id' => $this->chat->telegram_id,
-                    'text' => 'Введите новый телефон',
+                    'text' => trans('bot\settings.enter.phone'),
                     'reply_markup' => Keyboard::remove()
                 ]);
 
@@ -281,13 +283,13 @@ class SettingsService implements SettingsContract
                 $this->chat->update(['state' => BotState::STATE_SETTINGS_LOCATION]);
 
                 $settingsButtons = Keyboard::make()
-                    ->row(Keyboard::button('Место доставки'))
-                    ->row(Keyboard::button('Ряд'))
-                    ->row(Keyboard::button('Контейнер'));
+                    ->row(Keyboard::button(trans('bot\settings.select.locations.main')))
+                    ->row(Keyboard::button(trans('bot\settings.select.locations.sub1')))
+                    ->row(Keyboard::button(trans('bot\settings.select.locations.sub2')));
 
                 Telegram::sendMessage([
                     'chat_id' => $this->chat->telegram_id,
-                    'text' => "Выберите что вы хотите изменить:\n"
+                    'text' => trans('bot\settings.select.choose')
                         . $this->client->location->locationName->getName($this->client->locale) . ': '
                         . $this->client->location->sub1 . ' - ' . $this->client->location->sub2 . "\n",
                     'reply_markup' => $settingsButtons,
@@ -308,7 +310,7 @@ class SettingsService implements SettingsContract
 
                 Telegram::sendMessage([
                     'chat_id' => $this->chat->telegram_id,
-                    'text' => 'Выберите новое место доставки',
+                    'text' => trans('bot\settings.enter.locations.main'),
                     'reply_markup' => $locationKeyboard
                 ]);
 
@@ -318,7 +320,7 @@ class SettingsService implements SettingsContract
 
                 Telegram::sendMessage([
                     'chat_id' => $this->chat->telegram_id,
-                    'text' => 'Напишите ваш ряд',
+                    'text' => trans('bot\settings.enter.locations.sub1'),
                     'reply_markup' => Keyboard::remove()
                 ]);
 
@@ -328,7 +330,7 @@ class SettingsService implements SettingsContract
 
                 Telegram::sendMessage([
                     'chat_id' => $this->chat->telegram_id,
-                    'text' => 'Напишите номер контейнера',
+                    'text' => trans('bot\settings.enter.locations.sub2'),
                     'reply_markup' => Keyboard::remove()
                 ]);
 
@@ -344,7 +346,7 @@ class SettingsService implements SettingsContract
 
                 Telegram::sendMessage([
                     'chat_id' => $this->chat->telegram_id,
-                    'text' => 'Выберите язык',
+                    'text' => trans('bot\settings.enter.lang'),
                     'reply_markup' => $langKeyboard
                 ]);
 

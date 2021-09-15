@@ -84,6 +84,8 @@ class BotService implements BotContract
             $this->setClient($client);
         }
 
+        app('translator')->setLocale($this->client->locale ?? 'ua');
+
         if ($this->chat) {
             $text = $message->text ?? '';
 
@@ -116,6 +118,8 @@ class BotService implements BotContract
         if ($client = Client::whereTelegramId($callbackQuery->from->id)->first()) {
             $this->setClient($client);
         }
+
+        app('translator')->setLocale($this->client->locale ?? 'ua');
 
         if ($this->chat) {
             if ($this->chat->state >= BotState::STATE_ORDER_NEW && $this->chat->state <= BotState::STATE_ORDER_FINISHED) {
@@ -173,7 +177,7 @@ class BotService implements BotContract
     public function mainMenu()
     {
         $messages = (new Collection([
-            'main-menu' => 'Вы перешли в главное меню',
+            'main-menu' => trans('bot\mainMenu.open'),
         ]))->map(function ($item) {
             return ['chat_id' => $this->chat->telegram_id, 'text' => $item];
         });
@@ -181,9 +185,9 @@ class BotService implements BotContract
         $this->chat->update(['state' => BotState::STATE_MAIN_MENU]);
 
         $menu = Keyboard::make();
-        $menu->row(Keyboard::button('/order - Сделать заказ'));
-        $menu->row(Keyboard::button('/history 1 (стр.) - Мои заказы'), Keyboard::button('/feedback - Обратная связь'));
-        $menu->row(Keyboard::button('/settings - Настройки и информация'));
+        $menu->row(Keyboard::button(trans('bot\mainMenu.buttons.order')));
+        $menu->row(Keyboard::button(trans('bot\mainMenu.buttons.history')), Keyboard::button(trans('bot\mainMenu.buttons.feedback')));
+        $menu->row(Keyboard::button(trans('bot\mainMenu.buttons.settings')));
 
         Telegram::sendMessage($messages->get('main-menu') + ['reply_markup' => $menu]);
     }
@@ -193,6 +197,8 @@ class BotService implements BotContract
      */
     public function history(int $page = 1)
     {
+        app('translator')->setLocale($this->client->locale);
+
         $orders = Order::with('products')
             ->whereHas('client', function (Builder $builder) {
                 return $builder->where('telegram_id', $this->client->telegram_id);
@@ -201,8 +207,8 @@ class BotService implements BotContract
             ->paginate(5, ['*'], 'page', $page);
 
         $list = $orders->map(function (Order $order) {
-            return "*Заказ № {$order->id} - {$order->price} ₴*\n"
-                . '*Статус - ' . Order::getVerbalStatus($order->status) . '*' . "\n"
+            return "*" . trans('bot\history.order') . " № {$order->id} - {$order->price} ₴*\n"
+                . '*' . trans('bot\history.state') . ' - ' . Order::getVerbalStatus($order->status) . '*' . "\n"
                 . $order->products->map(fn(Product $product) => $product->getDisplayNamePriceWithAmount($this->client->locale))->implode("\n")
                 . ($order->comment ? "\n_{$order->comment}_" : '');
         });

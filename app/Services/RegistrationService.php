@@ -63,15 +63,17 @@ class RegistrationService implements RegistrationContract
                 switch ($text) {
                     case BotService::LANG_UA:
                         $this->client->locale = 'ua';
+                        app('translator')->setLocale('ua');
 
-                        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Выбран украинский']);
+                        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.lang')]);
                         $this->registration(BotState::STATE_REGISTRATION_LANGUAGE);
 
                         break;
                     case BotService::LANG_RU:
                         $this->client->locale = 'ru';
+                        app('translator')->setLocale('ru');
 
-                        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Выбран русский']);
+                        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.lang')]);
                         $this->registration(BotState::STATE_REGISTRATION_LANGUAGE);
 
                         break;
@@ -95,7 +97,7 @@ class RegistrationService implements RegistrationContract
                 )
                 ) {
                     $this->client->update(['name' => $text]);
-                    Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Ваше имя: ' . $text]);
+                    Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.name') . $text]);
                     $this->registration(BotState::STATE_REGISTRATION_NAME);
                 }
 
@@ -111,7 +113,7 @@ class RegistrationService implements RegistrationContract
                 )
                 ) {
                     $this->client->update(['phone' => $text]);
-                    Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Ваш телефон: ' . $text]);
+                    Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.phone') . $text]);
                     $this->registration(BotState::STATE_REGISTRATION_PHONE);
                 }
                 break;
@@ -133,7 +135,7 @@ class RegistrationService implements RegistrationContract
                     ]);
                 }
 
-                Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Место доставки: ' . $text]);
+                Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.location.main') . $text]);
                 $this->registration(BotState::STATE_REGISTRATION_LOCATION_MAIN);
                 break;
 
@@ -153,7 +155,7 @@ class RegistrationService implements RegistrationContract
                         ->update(['sub1' => $text]);
                 }
 
-                Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Ваш ряд: ' . $text]);
+                Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.location.sub1') . $text]);
                 $this->registration(BotState::STATE_REGISTRATION_LOCATION_SUB_1);
                 break;
 
@@ -171,7 +173,7 @@ class RegistrationService implements RegistrationContract
                     })
                         ->first()
                         ->update(['sub2' => $text]);
-                    Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Ваш контейнер: ' . $text]);
+                    Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\registration.location.sub2') . $text]);
                     $this->registration(BotState::STATE_REGISTRATION_LOCATION_SUB_2);
                 }
                 break;
@@ -211,14 +213,14 @@ class RegistrationService implements RegistrationContract
     public function registration(int $stage = BotState::STATE_REGISTRATION_START)
     {
         $messages = (new Collection([
-            'start' => 'Зравствуйте, сперва нужно зарегистрироваться',
-            'action-1' => 'Выберите язык:',
-            'action-2' => 'Как к вам обращаться:',
-            'action-3' => 'Напишите свой телефон:',
-            'action-4' => 'Выберите место доставки:',
-            'action-5' => 'В каком ряду вы находитесь:',
-            'action-6' => 'И последнее, напишите номер контейтера:',
-            'done' => 'Спасибо! Теперь вы можете сделать заказ ☺'
+            'start' => trans('bot\registration.actions.start'),
+            'action-1' => trans('bot\registration.actions.1'),
+            'action-2' => trans('bot\registration.actions.2'),
+            'action-3' => trans('bot\registration.actions.3'),
+            'action-4' => trans('bot\registration.actions.4'),
+            'action-5' => trans('bot\registration.actions.5'),
+            'action-6' => trans('bot\registration.actions.6'),
+            'done' => trans('bot\registration.actions.done')
         ]))->map(function ($item) {
             return ['chat_id' => $this->chat->telegram_id, 'text' => $item];
         });
