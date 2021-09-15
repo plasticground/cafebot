@@ -35,6 +35,8 @@ class OrderCommand extends Command
         if ($client) {
             if (($botState = $client->botState)->state === BotState::STATE_MAIN_MENU) {
                 try {
+                    app('translator')->setLocale($client->locale);
+
                     app(OrderContract::class)
                         ->setChat($botState)
                         ->setClient($client)

@@ -35,6 +35,8 @@ class SettingsCommand extends Command
         if ($client) {
             if (($botState = $client->botState)->state === BotState::STATE_MAIN_MENU) {
                 try {
+                    app('translator')->setLocale($client->locale);
+
                     app(SettingsContract::class)
                         ->setChat($botState)
                         ->setClient($client)

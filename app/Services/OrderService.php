@@ -90,28 +90,28 @@ class OrderService implements OrderContract
 
                 if ($order) {
                     switch ($text) {
-                        case 'Подтвердить заказ':
+                        case trans('bot\order.accept'):
                             $this->acceptOrder($order);
                             break;
-                        case 'Убрать блюдо':
+                        case trans('bot\order.remove'):
                             $this->removeProduct();
                             break;
-                        case 'Добавить блюдо':
+                        case trans('bot\order.add'):
                             $this->addProduct();
                             break;
-                        case 'Я передумал':
+                        case trans('bot\order.cancel'):
                             $this->cancel($order);
                             $state = BotState::STATE_MAIN_MENU;
                             break;
                     }
                 } else {
                     switch ($text) {
-                        case 'Подтвердить заказ':
-                        case 'Убрать блюдо':
-                        case 'Добавить блюдо':
-                            Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'У вас пустой заказ']);
+                        case trans('bot\order.accept'):
+                        case trans('bot\order.remove'):
+                        case trans('bot\order.add'):
+                            Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\order.empty')]);
                             break;
-                        case 'Я передумал':
+                        case trans('bot\order.cancel'):
                             $this->chat->update(['state' => BotState::STATE_MAIN_MENU]);
                             $state = BotState::STATE_MAIN_MENU;
                             break;
@@ -128,12 +128,12 @@ class OrderService implements OrderContract
 
                 if ($order) {
                     switch ($text) {
-                        case 'Да, всё верно':
+                        case trans('bot\order.apply'):
                             $this->chat->update(['state' => BotState::STATE_MAIN_MENU]);
                             $this->sendOrder($order);
                             $state = BotState::STATE_MAIN_MENU;
                             break;
-                        case 'Нет, вернуться назад':
+                        case trans('bot\order.back'):
                             $this->chat->update(['state' => BotState::STATE_ORDER_STARTED]);
                             $this->back();
                             break;
@@ -154,8 +154,8 @@ class OrderService implements OrderContract
     public function order(int $stage = BotState::STATE_ORDER_NEW)
     {
         $messages = (new Collection([
-            'cafe' => 'Выберите кафе',
-            'start-menu' => 'Начинаем собирать заказ',
+            'cafe' => trans('bot\order.cafe'),
+            'start-menu' => trans('bot\order.start'),
         ]))->map(function ($item) {
             return ['chat_id' => $this->chat->telegram_id, 'text' => $item];
         });
@@ -179,7 +179,7 @@ class OrderService implements OrderContract
                 $this->chat->update(['state' => BotState::STATE_ORDER_STARTED]);
 
                 $orderButtons = Keyboard::make()
-                    ->row(Keyboard::button('Я передумал'));
+                    ->row(Keyboard::button(trans('bot\order.cancel')));
 
                 Telegram::sendMessage([
                     'chat_id' => $this->chat->telegram_id,
@@ -254,7 +254,7 @@ class OrderService implements OrderContract
             if ($order->cafe_id !== $cafe->id) {
                 return Telegram::sendMessage([
                     'chat_id' => $this->chat->telegram_id,
-                    'text' => 'Вы не можете выбрать блюда из меню другого заведения.',
+                    'text' => trans('bot\order.bruh'),
                     'parse_mode' => 'markdown'
                 ]);
             }
@@ -262,13 +262,13 @@ class OrderService implements OrderContract
             $order->price += $product->price;
         } else {
             $orderButtons = Keyboard::make()
-                ->row(Keyboard::button('Подтвердить заказ'))
-                ->row(Keyboard::button('Убрать блюдо'))
-                ->row(Keyboard::button('Я передумал'));
+                ->row(Keyboard::button(trans('bot\order.accept')))
+                ->row(Keyboard::button(trans('bot\order.remove')))
+                ->row(Keyboard::button(trans('bot\order.cancel')));
 
             Telegram::sendMessage([
                 'chat_id' => $this->chat->telegram_id,
-                'text' => 'Вы начали собирать заказ',
+                'text' => trans('bot\order.started'),
                 'parse_mode' => 'markdown',
                 'reply_markup' => $orderButtons
             ]);
@@ -289,7 +289,7 @@ class OrderService implements OrderContract
                 return $product->getName($this->client->locale) . ' (' . $product->pivot->amount . 'шт.) - ' . ($product->price * $product->pivot->amount) . ' ₴';
             });
 
-        $text = "*Ваш заказ:*\n\n" . $products->implode("\n") . "\n\n*Итого: " . $order->price . ' ₴*';
+        $text = "*" . trans('bot\order.your-order') . ":*\n\n" . $products->implode("\n") . "\n\n*" . trans('bot\order.total') . ": " . $order->price . ' ₴*';
 
         if ($order->message_id) {
             Telegram::editMessageText([
@@ -325,25 +325,25 @@ class OrderService implements OrderContract
             ->first();
 
         if ($order === null) {
-            return Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Сначала начните собирать заказ']);
+            return Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\order.start-before')]);
         }
 
         if ($order->cafe_id !== $cafe->id) {
             return Telegram::sendMessage([
                 'chat_id' => $this->chat->telegram_id,
-                'text' => 'Вы не можете выбрать блюда из меню другого заведения.',
+                'text' => trans('bot\order.bruh'),
                 'parse_mode' => 'markdown'
             ]);
         }
 
         if ($order->products()->doesntExist()) {
-            return Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'У вас уже пустой заказ']);
+            return Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\order.already-empty')]);
         }
 
         if ($order->removeProduct($product)) {
             $order->price -= $product->price;
         } else {
-            return Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'В вашем заказе нет этого блюда']);
+            return Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\order.wrong-product')]);
         }
 
         $products = $order->products()
@@ -352,7 +352,7 @@ class OrderService implements OrderContract
                 return $product->getName($this->client->locale) . ' (' . $product->pivot->amount . 'шт.) - ' . ($product->price * $product->pivot->amount) . ' ₴';
             });
 
-        $text = "*Ваш заказ:*\n\n" . $products->implode("\n") . "\n\n*Итого: " . $order->price . ' ₴*';
+        $text = "*" . trans('bot\order.your-order') . ":*\n\n" . $products->implode("\n") . "\n\n*" . trans('bot\order.total') . ": " . $order->price . ' ₴*';
 
         Telegram::editMessageText([
             'chat_id' => $this->chat->telegram_id,
@@ -372,12 +372,12 @@ class OrderService implements OrderContract
         $this->chat->update(['state' => BotState::STATE_ORDER_ACCEPTING]);
 
         $acceptButtons = Keyboard::make()
-            ->row(Keyboard::button('Да, всё верно'))
-            ->row(Keyboard::button('Нет, вернуться назад'));
+            ->row(Keyboard::button(trans('bot\order.apply')))
+            ->row(Keyboard::button(trans('bot\order.back')));
 
         Telegram::sendMessage([
             'chat_id' => $this->chat->telegram_id,
-            'text' => 'Заказ *№' . $order->id . '*',
+            'text' => trans('bot\order.order') . ' *№' . $order->id . '*',
             'parse_mode' => 'markdown',
             'reply_markup' => $acceptButtons
         ]);
@@ -394,11 +394,11 @@ class OrderService implements OrderContract
         $this->chat->update(['state' => BotState::STATE_ORDER_EDITING]);
 
         $orderButtons = Keyboard::make()
-            ->row(Keyboard::button('Подтвердить заказ'))
-            ->row(Keyboard::button('Добавить блюдо'))
-            ->row(Keyboard::button('Я передумал'));
+            ->row(Keyboard::button(trans('bot\order.accept')))
+            ->row(Keyboard::button(trans('bot\order.add')))
+            ->row(Keyboard::button(trans('bot\order.cancel')));
 
-        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Используйте меню, чтобы убрать блюдо из заказа', 'reply_markup' => $orderButtons]);
+        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\order.use-menu-to-remove'), 'reply_markup' => $orderButtons]);
     }
 
     public function addProduct()
@@ -406,11 +406,11 @@ class OrderService implements OrderContract
         $this->chat->update(['state' => BotState::STATE_ORDER_STARTED]);
 
         $orderButtons = Keyboard::make()
-            ->row(Keyboard::button('Подтвердить заказ'))
-            ->row(Keyboard::button('Убрать блюдо'))
-            ->row(Keyboard::button('Я передумал'));
+            ->row(Keyboard::button(trans('bot\order.accept')))
+            ->row(Keyboard::button(trans('bot\order.remove')))
+            ->row(Keyboard::button(trans('bot\order.cancel')));
 
-        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Используйте меню, чтобы добавить блюдо в заказ', 'reply_markup' => $orderButtons]);
+        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\order.use-menu-to-add'), 'reply_markup' => $orderButtons]);
     }
 
     /**
@@ -423,7 +423,7 @@ class OrderService implements OrderContract
         $order->products()->delete();
         $order->delete();
 
-        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Заказ отменён']);
+        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\order.canceled')]);
 
         $this->chat->update(['state' => BotState::STATE_MAIN_MENU]);
     }
@@ -431,13 +431,13 @@ class OrderService implements OrderContract
     public function back()
     {
         $orderButtons = Keyboard::make()
-            ->row(Keyboard::button('Подтвердить заказ'))
-            ->row(Keyboard::button('Убрать блюдо'))
-            ->row(Keyboard::button('Я передумал'));
+            ->row(Keyboard::button(trans('bot\order.accept')))
+            ->row(Keyboard::button(trans('bot\order.remove')))
+            ->row(Keyboard::button(trans('bot\order.cancel')));
 
         Telegram::sendMessage([
             'chat_id' => $this->chat->telegram_id,
-            'text' => 'Вы можете продолжить собирать заказ',
+            'text' => trans('bot\order.can-resume'),
             'reply_markup' => $orderButtons
         ]);
     }
@@ -451,6 +451,6 @@ class OrderService implements OrderContract
             'status' => Order::STATUS_CREATED
         ]);
 
-        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => 'Заказ *№ ' . $order->id . '* отправлен в *' . $order->cafe->getName($this->client->locale) . '*!', 'parse_mode' => 'markdown']);
+        Telegram::sendMessage(['chat_id' => $this->chat->telegram_id, 'text' => trans('bot\order.order') . ' *№ ' . $order->id . '* ' . trans('bot\order.send-to') . ' *' . $order->cafe->getName($this->client->locale) . '*!', 'parse_mode' => 'markdown']);
     }
 }
