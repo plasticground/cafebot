@@ -66,4 +66,15 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->delete('/destroy/{id}', ['as' => 'admin.clients.destroy', 'uses' => 'ClientController@destroy']);
     });
 
+    $router->group(['prefix' => 'orders'], function () use ($router) {
+        $router->get('/', ['as' => 'admin.orders.index', 'uses' => 'OrderController@index']);
+        $router->put('/update/{id}', ['as' => 'admin.orders.update', 'uses' => 'OrderController@update']);
+        $router->delete('/destroy/{id}', ['as' => 'admin.orders.destroy', 'uses' => 'OrderController@destroy']);
+    });
+
+    $router->group(['prefix' => 'feedback'], function () use ($router) {
+        $router->get('/', ['as' => 'admin.feedback.index', 'uses' => 'FeedbackController@index']);
+        $router->put('/update', ['as' => 'admin.feedback.update', 'uses' => 'FeedbackController@update']);
+    });
+
 });

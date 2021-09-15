@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Localeable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Cafe extends Model
 {
+    use Localeable;
+
     /** @var string[]  */
     protected $fillable = [
         'ru_name',

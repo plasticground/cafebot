@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Api\v1\Bot\Commands;
 
 
-use App\Contracts\BotContract;
+use App\Contracts\RegistrationContract;
 use App\Models\BotState;
+use App\Models\Client;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Commands\Command;
 
@@ -44,7 +45,17 @@ class StartCommand extends Command
 
         if ($botState->state === BotState::STATE_NEW) {
             try {
-                app(BotContract::class)->registration($botState);
+                if (!($client = Client::whereTelegramId($id)->first())) {
+                    $client = Client::create([
+                        'telegram_id' => $id,
+                        'telegram_username' => $this->getUpdate()->message->from->username,
+                    ]);
+                }
+
+                app(RegistrationContract::class)
+                    ->setChat($botState)
+                    ->setClient($client)
+                    ->registration(BotState::STATE_REGISTRATION_START);
 
                 return response()->json(['ok' => true]);
             } catch (\Throwable $exception) {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Localeable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -15,19 +16,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class LocationName extends Model
 {
+    use Localeable;
 
     /** @var string[]  */
     protected $fillable = [
         'ua_name',
         'ru_name',
     ];
-
-    /**
-     * @param string $lang
-     * @return string
-     */
-    public function getName(string $lang = 'ru'): string
-    {
-        return $lang === 'ua' ? $this->ua_name : $this->ru_name;
-    }
 }

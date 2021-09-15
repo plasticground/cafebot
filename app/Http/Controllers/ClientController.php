@@ -10,9 +10,9 @@ class ClientController extends Controller
     /**
      * @return \Illuminate\View\View|\Laravel\Lumen\Application
      */
-    public function index()
+    public function index(Request $request)
     {
-        $clients = Client::all();
+        $clients = Client::latest()->paginate($request->get('limit', 15));;
 
         return view('admin.clients.index', compact('clients'));
     }

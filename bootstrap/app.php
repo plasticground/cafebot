@@ -62,6 +62,9 @@ $app->singleton('cookie', function () use ($app) {
 
 $app->bind(Illuminate\Contracts\Cookie\QueueingFactory::class, 'cookie');
 $app->bind(\App\Contracts\BotContract::class, \App\Services\BotService::class);
+$app->bind(\App\Contracts\OrderContract::class, \App\Services\OrderService::class);
+$app->bind(\App\Contracts\SettingsContract::class, \App\Services\SettingsService::class);
+$app->bind(\App\Contracts\RegistrationContract::class, \App\Services\RegistrationService::class);
 
 /*
 |--------------------------------------------------------------------------

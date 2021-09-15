@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Localeable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProductCategory extends Model
 {
+    use Localeable;
+
     /** @var string[]  */
     protected $fillable = [
         'ru_name',
